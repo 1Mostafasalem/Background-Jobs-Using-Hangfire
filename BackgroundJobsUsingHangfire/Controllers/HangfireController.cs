@@ -20,7 +20,10 @@ namespace BackgroundJobsUsingHangfire.Controllers
             
             //Delayed jobs: Delayed jobs are executed only once too, but not immediately, after a certain time interval.
             Console.WriteLine(DateTime.Now);
-            BackgroundJob.Schedule(() => SendMessage("Hangfire@outlook.com"), TimeSpan.FromMinutes(1));
+            var parentJobId = BackgroundJob.Schedule(() => SendMessage("Hangfire@outlook.com"), TimeSpan.FromMinutes(1));
+            
+            //Continuations jobs: Continuations are executed when its parent job has been finished.
+            BackgroundJob.ContinueJobWith(parentJobId,() => Console.WriteLine("Hello From Continous Job"));
 
             //Recurring jobs: Recurring jobs fire many times on the specified CRON schedule.
             RecurringJob.AddOrUpdate(() => SendMessage("Hangfire@outlook.com"), Cron.Minutely());
