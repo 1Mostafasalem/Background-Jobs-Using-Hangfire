@@ -15,8 +15,16 @@ namespace BackgroundJobsUsingHangfire.Controllers
         [HttpGet]
         public void Get()
         {
-            //Fire-and-forget :These jobs are executed only once and almost immediately after they are fired.
+            //Fire-and-forget: These jobs are executed only once and almost immediately after they are fired.
             BackgroundJob.Enqueue(() => SendMessage("Hangfire@outlook.com"));
+            
+            //Delayed jobs: Delayed jobs are executed only once too, but not immediately, after a certain time interval.
+            Console.WriteLine(DateTime.Now);
+            BackgroundJob.Schedule(() => SendMessage("Hangfire@outlook.com"), TimeSpan.FromMinutes(1));
+
+            //Recurring jobs: Recurring jobs fire many times on the specified CRON schedule.
+            RecurringJob.AddOrUpdate(() => SendMessage("Hangfire@outlook.com"), Cron.Minutely());
+
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
